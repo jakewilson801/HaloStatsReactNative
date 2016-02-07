@@ -8,7 +8,9 @@ var {
   StyleSheet,
   Text,
   View,
-  TextInput
+  TextInput,
+  RefreshControl,
+  ScrollView
 } = React;
 var TimerMixin = require('react-timer-mixin');
 var invariant = require('invariant');
@@ -33,7 +35,8 @@ var GamerTagScreen = React.createClass({
   timeoutID: (null: any),
   getInitialState: function(){
     return {
-      query : '',
+      query : 'JakeWilson801',
+      isRefreshing: false,
       isLoading: false,
       dataSource: new ListView.DataSource({
           rowHasChanged: (row1, row2) => row1 !== row2,
@@ -41,7 +44,7 @@ var GamerTagScreen = React.createClass({
     };
   },
   componentDidMount: function() {
-    this.searchGamerTag('');
+    this.searchGamerTag('JakeWilson801');
   },
   _urlForQuery: function(gamertag: string): string {
     if(gamertag){
@@ -50,7 +53,7 @@ var GamerTagScreen = React.createClass({
   },
   searchGamerTag: function(gamertag: string) {
     this.timeoutID = null;
-    this.setState({query: gamertag, isLoading: true, dataSource: this.getDataSource([])});
+    this.setState({query: gamertag, isLoading: true, isRefreshing: true,dataSource: this.getDataSource([])});
     fetch(this._urlForQuery(gamertag), API_ARGS)
       .then((response) => response.json())
       .catch((error) => {
@@ -68,9 +71,9 @@ var GamerTagScreen = React.createClass({
             var percentToNext = list.Csr ? list.Csr.PercentToNextTier : 0;
             return {title: name, url: url.iconImageUrl, id: list.PlaylistId, percent: percentToNext};
           });
-          this.setState({isLoading: false, dataSource: this.getDataSource(data)});
+          this.setState({isLoading: false, isRefreshing: false ,dataSource: this.getDataSource(data)});
         } else{
-          this.setState({isLoading: false, dataSource: this.getDataSource([])});
+          this.setState({isLoading: false, isRefreshing: false, dataSource: this.getDataSource([])});
         }
         }
       );
@@ -78,7 +81,7 @@ var GamerTagScreen = React.createClass({
   onSearchChange: function(event: Object) {
     var filter = event.nativeEvent.text;
     this.clearTimeout(this.timeoutID);
-    this.timeoutID = this.setTimeout(() => this.searchGamerTag(filter), 100);
+    this.timeoutID = this.setTimeout(() => this.searchGamerTag(filter), 400);
   },
   getDataSource: function(playlists: Array<any>): ListView.DataSource {
     return this.state.dataSource.cloneWithRows(playlists);
@@ -112,22 +115,36 @@ var GamerTagScreen = React.createClass({
       />
     );
   },
+  refreshList: function(){
+    this.setState({isRefreshing: true});
+    this.searchGamerTag(this.state.query);
+  },
   render: function(){
     var content = this.state.dataSource.getRowCount() === 0 ?
       <NoPlaylist
         query={this.state.query}
         isLoading={this.state.isLoadng}
         /> :
-        <ListView
-          ref="listview"
-          renderSeparator={this.renderSeparator}
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          automaticallyAdjustContentInsets={false}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps={true}
-          showsVerticalScrollIndicator={false}
-        />;
+            <ListView
+              ref="listview"
+              renderSeparator={this.renderSeparator}
+              dataSource={this.state.dataSource}
+              renderRow={this.renderRow}
+              automaticallyAdjustContentInsets={false}
+              keyboardDismissMode="on-drag"
+              keyboardShouldPersistTaps={true}
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                          <RefreshControl
+                            refreshing={this.state.isRefreshing}
+                            onRefresh={this.refreshList}
+                            tintColor="#ff0000"
+                            title="Loading..."
+                            colors={['#ff0000', '#00ff00', '#0000ff']}
+                            progressBackgroundColor="#ffff00"
+                          />
+                        }
+             />;
 
     return (
       <View style={styles.container}>
