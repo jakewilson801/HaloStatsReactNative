@@ -16,7 +16,7 @@ var SearchBar = React.createClass({
           autoCapitalize="none"
           autoCorrect={false}
           onChange={this.props.onSearchChange}
-          placeholder="Search a gamertag..."
+          placeholder={this.props.searchText}
           onFocus={this.props.onFocus}
           style={styles.searchBarInput}
         />

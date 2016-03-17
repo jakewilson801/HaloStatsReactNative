@@ -11,7 +11,7 @@ var {
   TextInput,
   RefreshControl,
   ScrollView
-} = React;
+  } = React;
 var TimerMixin = require('react-timer-mixin');
 var invariant = require('invariant');
 var dismissKeyboard = require('dismissKeyboard');
@@ -21,45 +21,45 @@ var _ = require('lodash-node');
 var PlaylistCell = require('./PlaylistCell')
 var API_URL = 'https://www.haloapi.com/stats/h5/servicerecords/arena';
 var API_ARGS = { method: 'GET',
-                 headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Ocp-Apim-Subscription-Key': '73aa374e744a4831983df95bebb7b8ba',
-                }
-              };
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Ocp-Apim-Subscription-Key': '73aa374e744a4831983df95bebb7b8ba',
+  }
+};
 var SearchBar = require('./SearchBar');
 var LOADING = {};
 
 var GamerTagScreen = React.createClass({
   mixins: [TimerMixin],
   timeoutID: (null: any),
-  getInitialState: function(){
-    return {
-      query : 'JakeWilson801',
-      isRefreshing: false,
-      isLoading: false,
-      dataSource: new ListView.DataSource({
-          rowHasChanged: (row1, row2) => row1 !== row2,
-      }),
-    };
-  },
-  componentDidMount: function() {
-    this.searchGamerTag('JakeWilson801');
-  },
-  _urlForQuery: function(gamertag: string): string {
-    if(gamertag){
-      return API_URL + '?players=' + gamertag;
-    }
-  },
-  searchGamerTag: function(gamertag: string) {
-    this.timeoutID = null;
-    this.setState({query: gamertag, isLoading: true, isRefreshing: true,dataSource: this.getDataSource([])});
-    fetch(this._urlForQuery(gamertag), API_ARGS)
-      .then((response) => response.json())
-      .catch((error) => {
-        this.setState({isLoading: false, dataSource: this.getDataSource([])});
-      })
-      .then((responseData) => {
+getInitialState: function(){
+  return {
+    query : 'JakeWilson801',
+    isRefreshing: false,
+    isLoading: false,
+    dataSource: new ListView.DataSource({
+      rowHasChanged: (row1, row2) => row1 !== row2,
+    }),
+  };
+},
+componentDidMount: function() {
+  this.searchGamerTag('JakeWilson801');
+},
+_urlForQuery: function(gamertag: string): string {
+  if(gamertag){
+    return API_URL + '?players=' + gamertag;
+  }
+},
+searchGamerTag: function(gamertag: string) {
+  this.timeoutID = null;
+  this.setState({query: gamertag, isLoading: true, isRefreshing: true,dataSource: this.getDataSource([])});
+  fetch(this._urlForQuery(gamertag), API_ARGS)
+    .then((response) => response.json())
+    .catch((error) => {
+      this.setState({isLoading: false, dataSource: this.getDataSource([])});
+    })
+    .then((responseData) => {
         if(responseData){
           var MyPlaylists = responseData.Results[0].Result.ArenaStats.ArenaPlaylistStats;
           var data =  _.map(MyPlaylists, (list) => {
@@ -75,66 +75,66 @@ var GamerTagScreen = React.createClass({
         } else{
           this.setState({isLoading: false, isRefreshing: false, dataSource: this.getDataSource([])});
         }
-        }
-      );
-  },
-  onSearchChange: function(event: Object) {
-    var filter = event.nativeEvent.text;
-    this.clearTimeout(this.timeoutID);
-    this.timeoutID = this.setTimeout(() => this.searchGamerTag(filter), 400);
-  },
-  getDataSource: function(playlists: Array<any>): ListView.DataSource {
-    return this.state.dataSource.cloneWithRows(playlists);
-  },
-  renderSeparator: function(
-     sectionID: number | string,
-     rowID: number | string,
-     adjacentRowHighlighted: boolean
-   ) {
-     var style = styles.rowSeparator;
-     if (adjacentRowHighlighted) {
-         style = [style, styles.rowSeparatorHide];
-     }
-     return (
-       <View key={'SEP_' + sectionID + '_' + rowID}  style={style}/>
-     );
-  },
-  renderRow: function(
-    playlist: Object,
-    sectionID: number | string,
-    rowID: number | string,
-    highlightRowFunc: (sectionID: ?number | string, rowID: ?number | string) => void,
-  ) {
-    return (
-      <PlaylistCell
-        key={playlist.id}
-        onSelect={() => console.log(playlist)}
-        onHighlight={() => highlightRowFunc(sectionID, rowID)}
-        onUnhighlight={() => highlightRowFunc(null, null)}
-        playlist={playlist}
-      />
+      }
     );
-  },
-  refreshList: function(){
-    this.setState({isRefreshing: true});
-    this.searchGamerTag(this.state.query);
-  },
-  render: function(){
-    var content = this.state.dataSource.getRowCount() === 0 ?
-      <NoPlaylist
-        query={this.state.query}
-        isLoading={this.state.isLoadng}
-        /> :
-            <ListView
-              ref="listview"
-              renderSeparator={this.renderSeparator}
-              dataSource={this.state.dataSource}
-              renderRow={this.renderRow}
-              automaticallyAdjustContentInsets={false}
-              keyboardDismissMode="on-drag"
-              keyboardShouldPersistTaps={true}
-              showsVerticalScrollIndicator={false}
-              refreshControl={
+},
+onSearchChange: function(event: Object) {
+  var filter = event.nativeEvent.text;
+  this.clearTimeout(this.timeoutID);
+  this.timeoutID = this.setTimeout(() => this.searchGamerTag(filter), 400);
+},
+getDataSource: function(playlists: Array<any>): ListView.DataSource {
+  return this.state.dataSource.cloneWithRows(playlists);
+},
+renderSeparator: function(
+  sectionID: number | string,
+  rowID: number | string,
+  adjacentRowHighlighted: boolean
+) {
+  var style = styles.rowSeparator;
+  if (adjacentRowHighlighted) {
+    style = [style, styles.rowSeparatorHide];
+  }
+  return (
+    <View key={'SEP_' + sectionID + '_' + rowID}  style={style}/>
+  );
+},
+renderRow: function(
+  playlist: Object,
+  sectionID: number | string,
+  rowID: number | string,
+  highlightRowFunc: (sectionID: ?number | string, rowID: ?number | string) => void,
+) {
+  return (
+    <PlaylistCell
+      key={playlist.id}
+      onSelect={() => console.log(playlist)}
+      onHighlight={() => highlightRowFunc(sectionID, rowID)}
+      onUnhighlight={() => highlightRowFunc(null, null)}
+      playlist={playlist}x
+    />
+  );
+},
+refreshList: function(){
+  this.setState({isRefreshing: true});
+  this.searchGamerTag(this.state.query);
+},
+render: function(){
+  var content = this.state.dataSource.getRowCount() === 0 ?
+    <NoPlaylist
+      query={this.state.query}
+      isLoading={this.state.isLoadng}
+    /> :
+    <ListView
+      ref="listview"
+      renderSeparator={this.renderSeparator}
+      dataSource={this.state.dataSource}
+      renderRow={this.renderRow}
+      automaticallyAdjustContentInsets={false}
+      keyboardDismissMode="on-drag"
+      keyboardShouldPersistTaps={true}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
                           <RefreshControl
                             refreshing={this.state.isRefreshing}
                             onRefresh={this.refreshList}
@@ -144,21 +144,22 @@ var GamerTagScreen = React.createClass({
                             progressBackgroundColor="#ffff00"
                           />
                         }
-             />;
+    />;
 
-    return (
-      <View style={styles.container}>
-          <SearchBar
-            onSearchChange={this.onSearchChange}
-            isLoading={this.state.isLoading}
-            onFocus={() =>
+  return (
+    <View style={styles.container}>
+      <SearchBar
+        onSearchChange={this.onSearchChange}
+        isLoading={this.state.isLoading}
+        searchText={'search for a gamertag'}
+        onFocus={() =>
               this.refs.listview && this.refs.listview.getScrollResponder().scrollTo(0, 0)}
-          />
-          <View style={styles.separator}/>
-          {content}
-      </View>
-    );
-  },
+      />
+      <View style={styles.separator}/>
+      {content}
+    </View>
+  );
+},
 });
 
 
