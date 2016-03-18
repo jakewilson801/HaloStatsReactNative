@@ -15,7 +15,7 @@ var {
 
 
 var GamerTagScreen = require('./GamerTagScreen');
-
+var LeaderboardScreen = require('./LeaderBoardScreen');
 var _navigator;
 BackAndroid.addEventListener('hardwareBackPress', () => {
   if (_navigator && _navigator.getCurrentRoutes().length > 1) {
@@ -30,6 +30,12 @@ var RouteMapper = function(route, navigationOperations, onComponentRef) {
   if (route.name === 'search') {
     return (
       <GamerTagScreen navigator={navigationOperations} />
+    );
+  }
+  if (route.name === 'leaderboard'){
+    return (
+      <LeaderboardScreen navigator={navigationOperations}
+      />
     );
   }
 };
