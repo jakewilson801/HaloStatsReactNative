@@ -152,7 +152,7 @@ var GamerTagScreen = React.createClass({
             onSearchChange={this.onSearchChange}
             isLoading={this.state.isLoading}
             onFocus={() =>
-              this.refs.listview && this.refs.listview.getScrollResponder().scrollTo(0, 0)}
+              this.refs.listview && this.refs.listview.getScrollResponder().scrollTo(0, 0, true)}
           />
           <View style={styles.separator}/>
           {content}
@@ -202,12 +202,14 @@ var styles = StyleSheet.create({
   },
   rowSeparator: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    height: 1,
+    height: 1 ,
     marginLeft: 4,
   },
   rowSeparatorHide: {
     opacity: 0.0,
   },
 });
+
+
 
 module.exports = GamerTagScreen;
