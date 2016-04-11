@@ -6,4 +6,5 @@ See the react native docs for building/running
 
 Cheers! 
 
-https://pbs.twimg.com/media/CalirgHUUAAgFSs.png:large
+![alt text](https://pbs.twimg.com/media/CalirgHUUAAgFSs.png:large "Screenshot")
+
